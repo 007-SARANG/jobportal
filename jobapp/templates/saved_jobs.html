@@ -1,0 +1,51 @@
+{% extends 'parent.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4 text-center">✨ Your Saved Jobs</h2>
+    
+    {% if saved_jobs %}
+        <div class="row">
+            {% for job in saved_jobs %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm h-100">
+                        {% if job.job.companylogo %}
+                        <img src="{{ job.job.companylogo.url }}" class="card-img-top p-3" alt="Company Logo" style="height: 120px; object-fit: contain;">
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ job.job.jobtitle }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ job.job.companyname }}</h6>
+                            
+                            <div class="mb-2">
+                                <span class="badge bg-primary me-1">{{ job.job.post }}</span>
+                                <span class="badge bg-secondary">{{ job.job.location }}</span>
+                            </div>
+
+                            <p class="card-text small text-muted">
+                                {{ job.job.description|truncatewords:20 }}
+                            </p>
+
+                            <p class="text-muted small mt-auto">💾 Saved on: {{ job.saved_on|date:"M d, Y H:i" }}</p>
+                            
+                            <div class="d-flex justify-content-between mt-3">
+                                <a href="{% url 'jobapp:jsapply' job.job.id %}" class="btn btn-sm btn-success">
+                                    Apply Now
+                                </a>
+                                <form action="{% url 'jobapp:remove_saved_job' job.job.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        ❌ Remove
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            You haven't saved any jobs yet. <br> Go to <a href="{% url 'jobapp:jobseeker' %}">Job Listings</a> to save some!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
